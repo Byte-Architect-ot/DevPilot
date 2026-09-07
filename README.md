@@ -27,14 +27,7 @@
 - **Node.js 18+** & `npm`
 - *(Optional)* Docker & Docker Compose (for local MySQL database)
 
-### 2. Environment Configuration
-Copy the template environment file:
-```bash
-cp .env.example .env
-```
-Update `.env` with your GitHub OAuth App credentials (`GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`) if using live GitHub OAuth login.
-
-### 3. Backend Setup
+### 2. Backend Setup
 Navigate to the `backend` directory and launch the Spring Boot server:
 ```bash
 cd backend
