@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS repositories (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    github_repo_id BIGINT NOT NULL,
+    owner VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    full_name VARCHAR(512),
+    is_private BOOLEAN NOT NULL DEFAULT FALSE,
+    default_branch VARCHAR(255),
+    language VARCHAR(255),
+    html_url TEXT,
+    description TEXT,
+    index_status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    indexed_at TIMESTAMP NULL,
+    chunk_count INT NOT NULL DEFAULT 0,
+    files_processed INT NOT NULL DEFAULT 0,
+    error_message TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT unique_repo_per_user UNIQUE (user_id, github_repo_id)
+);
