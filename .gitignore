@@ -41,6 +41,8 @@ scratch/
 *.db
 *.sqlite
 devpilot_mysql_data/
+*.timestamp-*.mjs
+image.png
 
 # Maven wrapper jar if compiled
 .mvn/wrapper/maven-wrapper.jar

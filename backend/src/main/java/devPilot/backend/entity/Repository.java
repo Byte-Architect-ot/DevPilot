@@ -71,6 +71,9 @@ public class Repository {
     @Column(name = "files_processed", nullable = false)
     private int filesProcessed = 0;
 
+    @Column(name = "files_total", nullable = false)
+    private int filesTotal = 0;
+
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
@@ -83,7 +86,7 @@ public class Repository {
     public Repository() {
     }
 
-    public Repository(UUID id, UUID userId, Long githubRepoId, String owner, String name, String fullName, boolean isPrivate, String defaultBranch, String language, String htmlUrl, String description, IndexStatus indexStatus, Instant indexedAt, int chunkCount, int filesProcessed, String errorMessage, Instant createdAt, Instant updatedAt) {
+    public Repository(UUID id, UUID userId, Long githubRepoId, String owner, String name, String fullName, boolean isPrivate, String defaultBranch, String language, String htmlUrl, String description, IndexStatus indexStatus, Instant indexedAt, int chunkCount, int filesProcessed, int filesTotal, String errorMessage, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.userId = userId;
         this.githubRepoId = githubRepoId;
@@ -99,6 +102,7 @@ public class Repository {
         this.indexedAt = indexedAt;
         this.chunkCount = chunkCount;
         this.filesProcessed = filesProcessed;
+        this.filesTotal = filesTotal;
         this.errorMessage = errorMessage;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -228,6 +232,14 @@ public class Repository {
         this.filesProcessed = filesProcessed;
     }
 
+    public int getFilesTotal() {
+        return filesTotal;
+    }
+
+    public void setFilesTotal(int filesTotal) {
+        this.filesTotal = filesTotal;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -283,6 +295,7 @@ public class Repository {
         private Instant indexedAt;
         private int chunkCount = 0;
         private int filesProcessed = 0;
+        private int filesTotal = 0;
         private String errorMessage;
         private Instant createdAt;
         private Instant updatedAt;
@@ -365,6 +378,11 @@ public class Repository {
             return this;
         }
 
+        public RepositoryBuilder filesTotal(int filesTotal) {
+            this.filesTotal = filesTotal;
+            return this;
+        }
+
         public RepositoryBuilder errorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
             return this;
@@ -381,7 +399,7 @@ public class Repository {
         }
 
         public Repository build() {
-            return new Repository(id, userId, githubRepoId, owner, name, fullName, isPrivate, defaultBranch, language, htmlUrl, description, indexStatus, indexedAt, chunkCount, filesProcessed, errorMessage, createdAt, updatedAt);
+            return new Repository(id, userId, githubRepoId, owner, name, fullName, isPrivate, defaultBranch, language, htmlUrl, description, indexStatus, indexedAt, chunkCount, filesProcessed, filesTotal, errorMessage, createdAt, updatedAt);
         }
     }
 }

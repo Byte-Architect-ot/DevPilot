@@ -92,124 +92,15 @@ export async function logoutUser() {
 }
 
 /**
- * Mock repositories fallback list for rich repository analysis showcase
- */
-const MOCK_REPOSITORIES = [
-  {
-    id: 1,
-    name: 'devpilot-core',
-    full_name: 'devpilot/devpilot-core',
-    description: 'AI-driven repository analysis engine with multi-language parsing and dependency graph mapping.',
-    primary_language: 'TypeScript',
-    stars: 342,
-    forks: 48,
-    is_private: false,
-    updated_at: '2026-09-06T14:22:00Z',
-    default_branch: 'main',
-    open_issues: 3,
-  },
-  {
-    id: 2,
-    name: 'backend-services',
-    full_name: 'devpilot/backend-services',
-    description: 'Spring Boot REST backend with OAuth2 authentication and MySQL persistence layer.',
-    primary_language: 'Java',
-    stars: 128,
-    forks: 19,
-    is_private: false,
-    updated_at: '2026-09-07T18:45:00Z',
-    default_branch: 'main',
-    open_issues: 1,
-  },
-  {
-    id: 3,
-    name: 'native-parser',
-    full_name: 'devpilot/native-parser',
-    description: 'High-performance C++ AST syntax trees collector for deep static codebase audits.',
-    primary_language: 'C++',
-    stars: 215,
-    forks: 31,
-    is_private: true,
-    updated_at: '2026-09-05T09:10:00Z',
-    default_branch: 'master',
-    open_issues: 0,
-  },
-  {
-    id: 4,
-    name: 'web-client',
-    full_name: 'devpilot/web-client',
-    description: 'Minimalist white light mode React frontend for DevPilot analysis workflow.',
-    primary_language: 'JavaScript',
-    stars: 89,
-    forks: 12,
-    is_private: false,
-    updated_at: '2026-09-07T21:00:00Z',
-    default_branch: 'main',
-    open_issues: 2,
-  },
-  {
-    id: 5,
-    name: 'ml-code-ranker',
-    full_name: 'devpilot/ml-code-ranker',
-    description: 'Python code summarization pipelines using modern embedding models.',
-    primary_language: 'Python',
-    stars: 567,
-    forks: 94,
-    is_private: false,
-    updated_at: '2026-09-04T11:30:00Z',
-    default_branch: 'main',
-    open_issues: 5,
-  },
-  {
-    id: 6,
-    name: 'proxy-router',
-    full_name: 'devpilot/proxy-router',
-    description: 'Ultra-fast Go microservice routing API traffic with zero memory overhead.',
-    primary_language: 'Go',
-    stars: 410,
-    forks: 55,
-    is_private: true,
-    updated_at: '2026-09-03T16:20:00Z',
-    default_branch: 'main',
-    open_issues: 1,
-  },
-  {
-    id: 7,
-    name: 'rust-security-scanner',
-    full_name: 'devpilot/rust-security-scanner',
-    description: 'Memory-safe dependency audit and SAST rule evaluator written in Rust.',
-    primary_language: 'Rust',
-    stars: 620,
-    forks: 73,
-    is_private: false,
-    updated_at: '2026-09-06T20:15:00Z',
-    default_branch: 'main',
-    open_issues: 4,
-  },
-  {
-    id: 8,
-    name: 'doc-generator',
-    full_name: 'devpilot/doc-generator',
-    description: 'Automated Markdown and HTML documentation extractor.',
-    primary_language: 'HTML',
-    stars: 45,
-    forks: 6,
-    is_private: false,
-    updated_at: '2026-08-30T10:00:00Z',
-    default_branch: 'main',
-    open_issues: 0,
-  }
-];
-
-/**
- * Fetch repositories from backend or fallback to initial data
+ * Fetch repositories from backend
  */
 export async function getRepositories() {
   const result = await fetchApi('/api/repositories');
-  if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+  if (result.status === 401) return [];
+  if (result.data && Array.isArray(result.data)) {
     return result.data;
   }
-  return MOCK_REPOSITORIES;
+  return [];
 }
 
 /**
@@ -219,8 +110,42 @@ export async function syncRepositories() {
   const result = await fetchApi('/api/repositories/sync', {
     method: 'POST',
   });
-  if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+  if (result.status === 401) return [];
+  if (result.data && Array.isArray(result.data)) {
     return result.data;
   }
   return getRepositories();
 }
+
+/**
+ * Trigger repository RAG indexing
+ */
+export async function indexRepository(repoId) {
+  const result = await fetchApi(`/api/repositories/${repoId}/index`, {
+    method: 'POST',
+  });
+  return result.data || result;
+}
+
+/**
+ * Get repository indexing status and progress
+ */
+export async function getRepoIndexingStatus(repoId) {
+  const result = await fetchApi(`/api/repositories/${repoId}/status`);
+  return result.data || null;
+}
+
+/**
+ * Send user prompt to RAG Chat endpoint for repository
+ */
+export async function sendRepoChatMessage(repoId, message) {
+  const result = await fetchApi(`/api/repositories/${repoId}/chat`, {
+    method: 'POST',
+    body: JSON.stringify({ message }),
+  });
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  return result.data;
+}
+

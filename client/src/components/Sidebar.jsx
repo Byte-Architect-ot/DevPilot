@@ -8,12 +8,14 @@ import {
   Settings,
   GitBranch,
   ChevronRight,
+  MessageSquare,
 } from 'lucide-react';
 
 export const Sidebar = ({ activeTab, setActiveTab }) => {
   const mainNav = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'repositories', label: 'Repositories', icon: FolderGit2 },
+    { id: 'chat', label: 'RAG Code Chat', icon: MessageSquare },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -42,10 +44,10 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
 
       {/* Navigation Sections */}
       <div className="p-4 flex flex-col gap-6 flex-1 overflow-y-auto">
-        {/* Core Navigation */}
+        {/* Navigation */}
         <div>
           <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider px-2 mb-2">
-            Core
+            Navigation
           </div>
           <nav className="flex flex-col gap-1">
             {mainNav.map((item) => {
@@ -65,7 +67,12 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
                     <Icon size={18} className={isActive ? 'text-zinc-900' : 'text-zinc-400'} />
                     <span>{item.label}</span>
                   </div>
-                  {isActive && <ChevronRight size={14} className="text-zinc-900" />}
+                  {item.badge && (
+                    <span className="text-[10px] font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700 rounded px-1.5 py-0.5">
+                      {item.badge}
+                    </span>
+                  )}
+                  {isActive && !item.badge && <ChevronRight size={14} className="text-zinc-900" />}
                 </button>
               );
             })}

@@ -30,53 +30,74 @@ public class GithubApiClient {
     }
 
     public List<Map<String, Object>> listUserRepos(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            return new ArrayList<>();
+        }
         List<Map<String, Object>> allRepos = new ArrayList<>();
         int page = 1;
         while (page <= 10) {
             final int currentPage = page;
-            List<Map<String, Object>> pageRepos = createClient(accessToken)
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                    .path("/user/repos")
-                    .queryParam("affiliation", "owner,collaborator,organization_member")
-                    .queryParam("sort", "updated")
-                    .queryParam("per_page", 100)
-                    .queryParam("page", currentPage)
-                    .build())
-                .retrieve()
-                .body(LIST_MAP);
+            try {
+                List<Map<String, Object>> pageRepos = createClient(accessToken)
+                    .get()
+                    .uri(uriBuilder -> uriBuilder
+                        .path("/user/repos")
+                        .queryParam("affiliation", "owner,collaborator,organization_member")
+                        .queryParam("sort", "updated")
+                        .queryParam("per_page", 100)
+                        .queryParam("page", currentPage)
+                        .build())
+                    .retrieve()
+                    .body(LIST_MAP);
 
-            if (pageRepos == null || pageRepos.isEmpty()) {
+                if (pageRepos == null || pageRepos.isEmpty()) {
+                    break;
+                }
+                allRepos.addAll(pageRepos);
+                if (pageRepos.size() < 100) {
+                    break;
+                }
+                page++;
+            } catch (Exception e) {
                 break;
             }
-            allRepos.addAll(pageRepos);
-            if (pageRepos.size() < 100) {
-                break;
-            }
-            page++;
         }
         return allRepos;
     }
 
     public Map<String, Object> getFileContent(String accessToken, String owner, String repo, String path, String ref) {
-        return createClient(accessToken)
-            .get()
-            .uri(uriBuilder -> uriBuilder
-                .path("/repos/{owner}/{repo}/contents/{path}")
-                .queryParam("ref", ref != null ? ref : "main")
-                .build(owner, repo, path))
-            .retrieve()
-            .body(MAP);
+        if (accessToken == null || accessToken.isBlank()) {
+            return Map.of();
+        }
+        try {
+            return createClient(accessToken)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/repos/{owner}/{repo}/contents/{path}")
+                    .queryParam("ref", ref != null ? ref : "main")
+                    .build(owner, repo, path))
+                .retrieve()
+                .body(MAP);
+        } catch (Exception e) {
+            return Map.of();
+        }
     }
 
     public Map<String, Object> getRepoTree(String accessToken, String owner, String repo, String ref) {
-        return createClient(accessToken)
-            .get()
-            .uri(uriBuilder -> uriBuilder
-                .path("/repos/{owner}/{repo}/git/trees/{ref}")
-                .queryParam("recursive", "1")
-                .build(owner, repo, ref != null ? ref : "main"))
-            .retrieve()
-            .body(MAP);
+        if (accessToken == null || accessToken.isBlank()) {
+            return Map.of();
+        }
+        try {
+            return createClient(accessToken)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/repos/{owner}/{repo}/git/trees/{ref}")
+                    .queryParam("recursive", "1")
+                    .build(owner, repo, ref != null ? ref : "main"))
+                .retrieve()
+                .body(MAP);
+        } catch (Exception e) {
+            return Map.of();
+        }
     }
 }

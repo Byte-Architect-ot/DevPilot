@@ -23,6 +23,7 @@ public record RepositoryResponse(
     Instant indexedAt,
     int chunkCount,
     int filesProcessed,
+    int filesTotal,
     String errorMessage,
     Instant createdAt,
     Instant updatedAt
@@ -44,6 +45,7 @@ public record RepositoryResponse(
             repo.getIndexedAt(),
             repo.getChunkCount(),
             repo.getFilesProcessed(),
+            repo.getFilesTotal(),
             repo.getErrorMessage(),
             repo.getCreatedAt(),
             repo.getUpdatedAt()

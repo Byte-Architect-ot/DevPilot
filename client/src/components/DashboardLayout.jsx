@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import UserNav from './UserNav';
 import OverviewView from './OverviewView';
 import RepositoriesView from './RepositoriesView';
+import ChatView from './ChatView';
 import SettingsView from './SettingsView';
 import PlaceholderView from './PlaceholderView';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +18,8 @@ export const DashboardLayout = () => {
         return 'Overview';
       case 'repositories':
         return 'Repositories';
+      case 'chat':
+        return 'RAG Code Chat';
       case 'security':
         return 'Code Security';
       case 'pull-requests':
@@ -79,6 +82,7 @@ export const DashboardLayout = () => {
             <OverviewView onNavigateToRepos={() => setActiveTab('repositories')} />
           )}
           {activeTab === 'repositories' && <RepositoriesView />}
+          {activeTab === 'chat' && <ChatView />}
           {activeTab === 'settings' && <SettingsView />}
           {['security', 'pull-requests', 'dependencies'].includes(activeTab) && (
             <PlaceholderView tabId={activeTab} />
